@@ -3,6 +3,15 @@ from langchain.tools import tool
 from models.paper import Paper
 from state import paper_store
 
+def _format_paper_string(paper: Paper) -> str:
+    return f"""
+    arxiv_id: {paper.arxiv_id}
+    Title: {paper.title}
+    Authors: {', '.join(paper.authors)}
+    Abstract: {paper.abstract}
+    Published: {paper.date}
+    """
+
 @tool
 def search_papers(query: str, max_results: int = 5) -> str:
     """
@@ -12,6 +21,7 @@ def search_papers(query: str, max_results: int = 5) -> str:
     Returns the title, authors, published date, and the abstract (but not the full text).
     """
     results = arxiv.Search(query=query, max_results=max_results).results()
+    formatted_papers = []
 
     for paper in results:
         paper_obj = Paper(
@@ -22,10 +32,6 @@ def search_papers(query: str, max_results: int = 5) -> str:
                         abstract=paper.summary
                     )
         paper_store.setdefault(paper_obj.arxiv_id, paper_obj)
+        formatted_papers.append(_format_paper_string(paper_obj))
 
-    # TODO: format string
-    formatted_string = """
-            
-    """
-
-    return formatted_string
+    return "\n\n".join(formatted_papers)
