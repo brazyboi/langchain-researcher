@@ -1,10 +1,7 @@
 from langchain_openai import ChatOpenAI
-from langchain.agents import create_agent, AgentState
-from langchain_core.prompts import PromptTemplate
+from langchain.agents import create_agent
 from tools.fetch_paper import fetch_paper
 from tools.search_papers import search_papers
-
-
 
 def run(query: str, reading_level: str):
     SYSTEM_PROMPT = f"""
@@ -26,4 +23,5 @@ def run(query: str, reading_level: str):
             {"role": "user", "content": query}
         ]
     })
-
+    
+    return result
